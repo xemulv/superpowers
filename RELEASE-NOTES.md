@@ -1,5 +1,22 @@
 # Superpowers Release Notes
 
+## v5.1.0 (modified-3)
+
+### walking-skeleton: Phase 1.5 — save inspect output and implement directly
+
+Two fixes to Phase 1.5:
+
+1. After running `inspect_<system>()`, save its output to `tests/fixtures/<fixture>_<ext>.out` (e.g. `sample.php` → `sample_php.out`). This is the permanent record of the external API shape — future agents read it instead of re-running the utility.
+2. INTEGRATION functions are thin wrappers around the external system. Implement them with the real API now that the output shape is known — do not leave stubs returning `None`.
+
+Updated Phase 1.5 steps:
+
+1. Write `inspect_<system>()` to dump real external system output on a sample input.
+2. Run it on a real fixture, show output to the user.
+3. Save the output to `tests/fixtures/<fixture>_<ext>.out`.
+4. Implement the INTEGRATION functions using the real API.
+5. Reclassify `[INTEGRATION]` → `[MUSCLE]` in the decomposition document.
+
 ## v5.1.0 (modified-2)
 
 ### walking-skeleton: Phase 1.5 — resolve INTEGRATION functions

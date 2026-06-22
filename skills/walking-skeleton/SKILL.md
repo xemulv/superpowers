@@ -26,8 +26,9 @@ If the decomposition document contains any `[INTEGRATION]` functions, do this be
 
 1. Write a separate `inspect_<system>()` utility function that dumps real output from the external system for a sample input. Place it in the appropriate module (e.g. `parser_php.py`). This function is kept — it may be reused for debugging.
 2. Run it on a real fixture and show the output to the user.
-3. Hardcode the real output shape into the INTEGRATION function stubs.
-4. Reclassify those functions from `[INTEGRATION]` to `[MUSCLE]` in the decomposition document.
+3. Save the output to `tests/fixtures/<fixture>_<ext>.out` (e.g. `sample.php` → `sample_php.out`). This file is the permanent record of the external API shape — future agents read it instead of re-running `inspect_<system>()`.
+4. Implement the INTEGRATION functions using the real API you just observed. These are thin wrappers around the external system — write the real code now, not stubs.
+5. Reclassify those functions from `[INTEGRATION]` to `[MUSCLE]` in the decomposition document.
 
 After this phase, no `[INTEGRATION]` entries remain. All further steps work only with `[MUSCLE]`.
 
