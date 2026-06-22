@@ -20,6 +20,17 @@ Use at the start of a feature to design top-down: write the orchestration logic 
 
 **Do not stop the loop on your own judgment.** Only the user decides when decomposition is complete.
 
+## Phase 1.5: Resolve INTEGRATION functions
+
+If the decomposition document contains any `[INTEGRATION]` functions, do this before writing tests:
+
+1. Write a separate `inspect_<system>()` utility function that dumps real output from the external system for a sample input. Place it in the appropriate module (e.g. `parser_php.py`). This function is kept — it may be reused for debugging.
+2. Run it on a real fixture and show the output to the user.
+3. Hardcode the real output shape into the INTEGRATION function stubs.
+4. Reclassify those functions from `[INTEGRATION]` to `[MUSCLE]` in the decomposition document.
+
+After this phase, no `[INTEGRATION]` entries remain. All further steps work only with `[MUSCLE]`.
+
 ## Phase 2: Tests
 
 ### Integration test

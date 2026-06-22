@@ -2,6 +2,17 @@
 
 ## v5.1.0 (modified-2)
 
+### walking-skeleton: Phase 1.5 — resolve INTEGRATION functions
+
+If any `[INTEGRATION]` functions exist after the decomposition loop, a new Phase 1.5 runs before tests:
+
+1. Write an `inspect_<system>()` utility to dump real external system output on a sample input.
+2. Run it on a real fixture, show output.
+3. Hardcode the real output shape into INTEGRATION stubs.
+4. Reclassify `[INTEGRATION]` → `[MUSCLE]` in the decomposition document.
+
+After Phase 1.5, no INTEGRATION entries remain and all subsequent phases work with MUSCLE only.
+
 ### Decomposition: INTEGRATION function type
 
 `superpowers:decomposition` now distinguishes between `[MUSCLE]` and `[INTEGRATION]` children:
