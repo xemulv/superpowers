@@ -26,15 +26,20 @@ def handle_get_user(user_id: int) -> Response:
     return format_response(user, perms)
 ```
 
-## Step 2: Identify called functions
+## Step 2: Identify and classify called functions
 
-List every function the skeleton calls that does not yet have a real implementation (only stubs or does not exist at all).
+List every function the skeleton calls that does not yet have a real implementation. Classify each as:
+
+- **`[INTEGRATION]`** — interfaces with an external system: file I/O, database, HTTP, external library (e.g. tree-sitter, ORM, SDK). Its real output defines data shapes the rest of the system must handle.
+- **`[MUSCLE]`** — pure business logic with no external dependencies. Can be tested and implemented using synthetic data.
 
 ## Step 3: Write stubs
 
 For each called function, create a stub that returns hardcoded data of the correct type. Place stubs in the same file as the skeleton, or in the appropriate module file per the project's conventions.
 
 The hardcoded data must match the type the skeleton expects. Match field names and structure to what the skeleton code actually uses.
+
+**Note for `[INTEGRATION]` stubs:** the return value is synthetic. Real implementation must come before MUSCLE functions — until then, MUSCLE stubs may use incorrect data shapes.
 
 Example stubs:
 
@@ -53,25 +58,27 @@ def format_response(user: dict, perms: dict) -> dict:
 
 Find or create `docs/superpowers/decompositions/YYYY-MM-DD-<feature>.md`.
 
-Add a section for this function. Use the literal text `[SKELETON]` and `[MUSCLE]`:
+Add a section for this function. Use the literal text `[SKELETON]`, `[MUSCLE]`, or `[INTEGRATION]`:
 
 ```markdown
 ### handle_get_user [SKELETON]
+- load_from_db [INTEGRATION]
 - fetch_user [MUSCLE]
 - get_permissions [MUSCLE]
 - format_response [MUSCLE]
 ```
 
-If a child was already listed as `[MUSCLE]` under another parent in the document, update that parent's entry to `[SKELETON]`.
+If a child was already listed under another parent, update that parent's entry to `[SKELETON]`.
 
 Rules:
-- All children start as `[MUSCLE]` when first listed.
-- A function changes from `[MUSCLE]` to `[SKELETON]` only when `decomposition` is run for it — never earlier.
+- All children start as `[MUSCLE]` or `[INTEGRATION]` when first listed.
+- A function changes to `[SKELETON]` only when `decomposition` is run for it — never earlier.
+- `[INTEGRATION]` functions must be implemented before `[MUSCLE]` functions — their real output defines data shapes that MUSCLE stubs cannot guess.
 
 ## Step 5: Ask what's next
 
-Read the full decomposition document. Find all functions marked `[MUSCLE]` that do not appear as a `[SKELETON]` header. Show the list:
+Read the full decomposition document. Find all functions marked `[MUSCLE]` or `[INTEGRATION]` that do not appear as a `[SKELETON]` header. Show the list grouped by type:
 
-> "MUSCLE functions not yet decomposed: `fetch_user`, `get_permissions`, `format_response`. Which do you want to decompose next, or shall we stop?"
+> "INTEGRATION functions (implement first): `load_from_db`. MUSCLE functions not yet decomposed: `fetch_user`, `get_permissions`, `format_response`. Which do you want to decompose next, or shall we stop?"
 
 Wait for the user's response. Do not proceed until the user replies.

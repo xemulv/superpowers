@@ -1,5 +1,18 @@
 # Superpowers Release Notes
 
+## v5.1.0 (modified-2)
+
+### Decomposition: INTEGRATION function type
+
+`superpowers:decomposition` now distinguishes between `[MUSCLE]` and `[INTEGRATION]` children:
+
+- **`[INTEGRATION]`** — functions that interface with external systems (file I/O, databases, external libraries). Their real output defines data shapes the rest of the system must handle. Must be implemented before `[MUSCLE]` functions.
+- **`[MUSCLE]`** — pure business logic with no external dependencies.
+
+Step 2 now asks the agent to classify each called function. Step 4 documents them with the appropriate tag. Step 5 lists INTEGRATION functions separately and explicitly marks them as "implement first."
+
+**Why:** without this distinction, MUSCLE stubs return synthetic data that may not match the real output of external systems, making it impossible to verify correctness during the walking skeleton phase.
+
 ## v5.1.0 (modified)
 
 ### Walking Skeleton Skills
