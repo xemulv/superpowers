@@ -1,5 +1,28 @@
 # Superpowers Release Notes
 
+## v5.1.0 (modified)
+
+### Walking Skeleton Skills
+
+Two new skills for top-down feature development.
+
+**`superpowers:walking-skeleton`** — orchestrates the full walking skeleton workflow:
+1. Decomposition loop — asks for the entry point, decomposes it, shows the tree after each step, repeats until the user stops
+2. Tests — writes one failing integration test (correct expected output, not stub output) and one failing unit test per `[MUSCLE]` function
+3. Comments — adds a one-line comment above every function (skeleton: what it orchestrates; muscle: input types, return shape, key behavior)
+4. Plan — briefs `superpowers:writing-plans` with all muscle functions, test paths, and TDD instruction
+
+**`superpowers:decomposition`** — single-function decomposition step, callable standalone or from within `walking-skeleton`:
+1. Reads or writes the skeleton function (real orchestration logic, not a stub)
+2. Identifies all called functions without real implementations
+3. Writes hardcoded stubs of the correct type
+4. Updates `docs/superpowers/decompositions/YYYY-MM-DD-<feature>.md` with `[SKELETON]` / `[MUSCLE]` markers
+5. Shows remaining undecomposed `[MUSCLE]` functions and waits for user direction
+
+### Brainstorming Integration
+
+After the user approves the spec, `superpowers:brainstorming` now asks whether to use the walking skeleton approach. If yes → invokes `superpowers:walking-skeleton` (which handles decomposition, tests, and generates its own TDD plan). If no → invokes `superpowers:writing-plans` as before.
+
 ## v5.1.0 (2026-04-30)
 
 ### Removals
