@@ -35,13 +35,9 @@ List every function the skeleton calls that does not yet have a real implementat
 
 ## Step 3: Write stubs
 
-For each called function, create a stub that returns hardcoded data of the correct type. Place stubs in the same file as the skeleton, or in the appropriate module file per the project's conventions.
+The goal: after this step the top-level skeleton must be **runnable end-to-end and produce visible output** (in a browser, terminal, or file). Every stub must return realistic hardcoded data — never `None`, never an empty structure — so the pipeline does not crash before reaching the output.
 
-The hardcoded data must match the type the skeleton expects. Match field names and structure to what the skeleton code actually uses.
-
-**Note for `[INTEGRATION]` stubs:** the return value is synthetic. Real implementation must come before MUSCLE functions — until then, MUSCLE stubs may use incorrect data shapes.
-
-Example stubs:
+For each called function, create a stub in the appropriate module file. Match field names and structure to what the skeleton actually uses downstream.
 
 ```python
 def fetch_user(user_id: int) -> dict:
@@ -53,6 +49,17 @@ def get_permissions(user: dict) -> dict:
 def format_response(user: dict, perms: dict) -> dict:
     return {"status": 200, "body": {"user": user, "perms": perms}}
 ```
+
+**`[INTEGRATION]` stubs — pipeline blocker rule:**
+
+If an INTEGRATION function returns an external-library object that cannot be realistically faked (e.g. a tree-sitter `Node`, a DB cursor, an HTTP response object), do NOT write `return None`. Instead, mark it explicitly as a **pipeline blocker**:
+
+```python
+def parse_file(php_file):
+    raise NotImplementedError("BLOCKER: returns tree-sitter Node — cannot be faked. Run inspect_php() first.")
+```
+
+A blocker means the skeleton cannot run until this function is implemented. Report the blocker to the user immediately at the end of Step 5. Do not proceed to the next decomposition without resolving it.
 
 ## Step 4: Update the decomposition document
 

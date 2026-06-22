@@ -20,17 +20,26 @@ Use at the start of a feature to design top-down: write the orchestration logic 
 
 **Do not stop the loop on your own judgment.** Only the user decides when decomposition is complete.
 
-## Phase 1.5: Resolve INTEGRATION functions
+## Phase 1.5: Run the skeleton end-to-end
 
-If the decomposition document contains any `[INTEGRATION]` functions, do this before writing tests:
+After the decomposition loop, run the top-level function with a real input. The goal is **visible output** — something rendered in a browser, printed to a terminal, or written to a file. Do not proceed to Phase 2 until you see it.
 
-1. Write a separate `inspect_<system>()` utility function that dumps real output from the external system for a sample input. Place it in the appropriate module (e.g. `parser_php.py`). This function is kept — it may be reused for debugging.
-2. Run it on a real fixture and show the output to the user.
-3. Save the output to `tests/fixtures/<fixture>_<ext>.out` (e.g. `sample.php` → `sample_php.out`). This file is the permanent record of the external API shape — future agents read it instead of re-running `inspect_<system>()`.
-4. Implement the INTEGRATION functions using the real API you just observed. These are thin wrappers around the external system — write the real code now, not stubs.
-5. Reclassify those functions from `[INTEGRATION]` to `[MUSCLE]` in the decomposition document.
+Repeat until the pipeline produces visible output:
 
-After this phase, no `[INTEGRATION]` entries remain. All further steps work only with `[MUSCLE]`.
+1. Run the skeleton with a real input.
+2. If visible output appears → done, go to Phase 2.
+3. If it crashes or produces nothing, find the blocker:
+   - **INTEGRATION blocker** (external-library object that cannot be faked):
+     1. Write `inspect_<system>()` — a utility that dumps real output from the external system on a sample input. Keep it; it may be reused for debugging.
+     2. Run it on a real fixture, show the output to the user.
+     3. Save the output to `tests/fixtures/<fixture>_<ext>.out` (e.g. `sample.php` → `sample_php.out`). This is the permanent record of the API shape — future agents read it instead of re-running the utility.
+     4. Implement the function using the real API. These are thin wrappers — write the real code now.
+     5. Reclassify `[INTEGRATION]` → `[MUSCLE]` in the decomposition document.
+   - **MUSCLE blocker** (stub returns `None` or empty and crashes the pipeline):
+     - Update the stub to return realistic hardcoded data that lets the pipeline continue.
+4. Return to step 1.
+
+After this phase, the skeleton runs end-to-end and produces visible output.
 
 ## Phase 2: Tests
 

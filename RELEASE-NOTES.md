@@ -1,5 +1,20 @@
 # Superpowers Release Notes
 
+## v5.1.0 (modified-4)
+
+### walking-skeleton + decomposition: skeleton must be runnable from the first iteration
+
+Fundamental methodology change: **the goal of decomposition is to make the skeleton runnable end-to-end and produce visible output (browser, terminal, or file) before any tests are written.**
+
+**decomposition — Step 3:**
+- Stubs must return realistic hardcoded data. Never `None`, never empty structures.
+- If an `[INTEGRATION]` function returns an external-library object that cannot be realistically faked (e.g. a tree-sitter `Node`), it is a **pipeline blocker**. Write `raise NotImplementedError("BLOCKER: ...")` instead of `return None`. Report the blocker to the user immediately at Step 5.
+
+**walking-skeleton — Phase 1.5 (rewritten):**
+- After the decomposition loop: run the skeleton with real input. Goal: visible output.
+- If blocked — resolve it. INTEGRATION blocker: implement using the real API (run `inspect_<system>()`, save output to `tests/fixtures/<fixture>_<ext>.out`, implement). MUSCLE blocker: update stub to return realistic data.
+- Repeat until the pipeline produces visible output. Only then proceed to Phase 2 (tests).
+
 ## v5.1.0 (modified-3)
 
 ### walking-skeleton: Phase 1.5 — save inspect output and implement directly
