@@ -101,6 +101,10 @@ Expected: PASS
 git add tests/path/test.py src/path/file.py
 git commit -m "feat: add specific feature"
 ```
+
+- [ ] **Step 6: Review doc**
+
+Invoke `superpowers:review-doc` (mode: `new` for new functions, `fix` for changes to existing code).
 ````
 
 ## No Placeholders
