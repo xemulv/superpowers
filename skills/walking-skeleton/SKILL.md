@@ -35,8 +35,9 @@ Repeat until the pipeline produces visible output:
      3. Save the output to `tests/fixtures/<fixture>_<ext>.out` (e.g. `sample.php` → `sample_php.out`). This is the permanent record of the API shape — future agents read it instead of re-running the utility.
      4. Implement the function using the real API. These are thin wrappers — write the real code now.
      5. Reclassify `[INTEGRATION]` → `[MUSCLE]` in the decomposition document.
-   - **MUSCLE blocker** (stub returns `None` or empty and crashes the pipeline):
-     - Update the stub to return realistic hardcoded data that lets the pipeline continue.
+   - **MUSCLE blocker** (stub raises `NotImplementedError("DEPENDS ON: X")`):
+     - If X is **not yet implemented** → implement X first (treat as INTEGRATION blocker above).
+     - If X is **already implemented or stubbed** → write a proper hardcoded stub for this function using X's real output shape.
 4. Return to step 1.
 
 After this phase, the skeleton runs end-to-end and produces visible output.
@@ -64,15 +65,20 @@ This test uses the **correct** expected output — not the hardcoded stub output
 For each function marked `[MUSCLE]` in the decomposition document:
 
 1. Read the stub to understand the return shape and parameter types.
-2. Write a unit test in `tests/test_<function_name>.py`. If the correct behavior is ambiguous from the stub alone, ask the user: "What should `<function>` return for input `<example>`?"
+2. Write a unit test in `tests/test_<function_name>.py` using **structural assertions** — check types, shapes, and invariants. Do not assert exact field values; at this stage only the structure is known.
 
 ```python
-def test_<muscle_function>_returns_correct_result():
+def test_<muscle_function>_returns_correct_structure():
     result = <muscle_function>(<input>)
-    assert result == <correct_expected_output>
+    assert isinstance(result, <ExpectedType>)
+    assert <structural_invariant>  # e.g. len(result.nodes) > 0
 ```
 
-All unit tests will fail. That is correct. They define what the agent must implement.
+3. Run the tests — they must be **green** (stubs return correct structure).
+4. Replace each stub body with `return None`.
+5. Run the tests again — they must now be **red**.
+
+The unit tests are now failing and ready to drive TDD implementation. The integration test is the primary acceptance spec.
 
 ## Phase 3: Comments
 

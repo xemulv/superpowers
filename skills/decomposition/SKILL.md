@@ -61,6 +61,17 @@ def parse_file(php_file):
 
 A blocker means the skeleton cannot run until this function is implemented. Report the blocker to the user immediately at the end of Step 5. Do not proceed to the next decomposition without resolving it.
 
+**`[MUSCLE]` stubs — depends-on rule:**
+
+If a MUSCLE function's input comes directly from an unresolved INTEGRATION BLOCKER (i.e., its parameter is the output of a function that raises `NotImplementedError`), do NOT write a hardcoded stub — the correct data shape is unknown. Instead, mark it as a **depends-on blocker**:
+
+```python
+def B(node):
+    raise NotImplementedError("DEPENDS ON: A — implement A first")
+```
+
+Write a normal hardcoded stub only for MUSCLE functions whose inputs do not depend on unresolved INTEGRATION blockers.
+
 ## Step 4: Update the decomposition document
 
 Find or create `docs/superpowers/decompositions/YYYY-MM-DD-<feature>.md`.
